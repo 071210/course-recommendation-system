@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Input Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+    .logo {
+      font-weight: bold;
+      color: #643ecb;
+      font-size: 1.2rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #643ecb;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .form-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #643ecb;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-weight: 500;
+    }
+    select, input[type="number"] {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .interest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .btn-submit {
+      display: block;
+      width: 100%;
+      background-color: #643ecb;
+      color: #fff;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 2rem;
+      transition: background-color 0.3s;
+      position: relative;
+    }
+    .btn-submit:hover {
+      background-color: #5434b0;
+    }
+    .btn-submit:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+      border: 1px solid #f5c6cb;
+      display: none;
+    }
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+      border: 1px solid #c3e6cb;
+      display: none;
+    }
+    .api-status {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      z-index: 1000;
+    }
+    .api-status.online {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .api-status.offline {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Solitude</div>
+    <nav>
+      <a onclick="goToPage('index.html')">Home</a>
+      <a onclick="goToPage('input.html')">Recommendation</a>
+      <a onclick="goToPage('contact.html')">Contact</a>
+    </nav>
+  </header>
+
+  <div id="apiStatus" class="api-status offline">API: Checking...</div>
+
+  <div class="form-container">
+    <h2>Tell Us About Yourself</h2>
+    <form id="courseForm">
+      <div class="section">
+        <label for="cgpa">CGPA Level (1-5 scale)</label>
+        <select name="cgpa" id="cgpa" required>
+          <option value="">-- Select CGPA Level --</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <p><strong>Subject Grades (1-5 scale, same as CGPA, leave 0 if not taken)</strong></p>
+        <label>Programming</label>
+        <select name="programming" id="programming">
+          <option value="0">Not taken</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+        
+        <label>Multimedia</label>
+        <select name="multimedia" id="multimedia">
+          <option value="0">Not taken</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+        
+        <label>Machine Learning</label>
+        <select name="machineLearning" id="machineLearning">
+          <option value="0">Not taken</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+        
+        <label>Database</label>
+        <select name="database" id="database">
+          <option value="0">Not taken</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+        
+        <label>Software Engineering</label>
+        <select name="softwareEngineering" id="softwareEngineering">
+          <option value="0">Not taken</option>
+          <option value="5">5 - Excellent (3.5-4.0 GPA)</option>
+          <option value="4">4 - Good (3.0-3.4 GPA)</option>
+          <option value="3">3 - Average (2.5-2.9 GPA)</option>
+          <option value="2">2 - Below Average (2.0-2.4 GPA)</option>
+          <option value="1">1 - Poor (1.0-1.9 GPA)</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <p><strong>Interest Level (1–5)</strong></p>
+        <div class="interest-grid">
+          <label>Game Development <input type="number" min="1" max="5" name="gameDevelopment" id="gameDevelopment" required /></label>
+          <label>Web Development/UI/UX Design <input type="number" min="1" max="5" name="webDevelopment" id="webDevelopment" required /></label>
+          <label>Artificial Intelligence <input type="number" min="1" max="5" name="artificialIntelligence" id="artificialIntelligence" required /></label>
+          <label>Database System/Database Design <input type="number" min="1" max="5" name="databaseSystem" id="databaseSystem" required /></label>
+          <label>Software Validation & Testing <input type="number" min="1" max="5" name="softwareValidation" id="softwareValidation" required /></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <label for="difficulty">Preferred Course Difficulty</label>
+        <select name="difficulty" id="difficulty" required>
+          <option value="">-- Select Difficulty --</option>
+          <option value="1">Easy</option>
+          <option value="2">Moderate</option>
+          <option value="3">Difficult</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <label for="learningStyle">Learning Style</label>
+        <select name="learningStyle" id="learningStyle" required>
+          <option value="">-- Select Style --</option>
+          <option value="1">Visual</option>
+          <option value="2">Kinesthetic (Hands on Practice)</option>
+          <option value="3">Reading/Writing</option>
+          <option value="4">Auditory</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">Get Recommendation</button>
+    </form>
+    
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+  </div>
+
+  <script>
+    // Configuration
+    const API_BASE_URL = "https://course-recommendation-system.onrender.com/api";
+    let isLoading = false;
+
+    // Page navigation
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    // API Status Check
+    async function checkApiStatus() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        if (response.ok) {
+          updateApiStatus(true);
+        } else {
+          updateApiStatus(false);
+        }
+      } catch (error) {
+        updateApiStatus(false);
+      }
+    }
+
+    function updateApiStatus(isOnline) {
+      const statusElement = document.getElementById('apiStatus');
+      if (isOnline) {
+        statusElement.className = 'api-status online';
+        statusElement.textContent = 'API: Online';
+      } else {
+        statusElement.className = 'api-status offline';
+        statusElement.textContent = 'API: Offline';
+      }
+    }
+
+    function showMessage(message, isError = false) {
+      const errorDiv = document.getElementById('errorMessage');
+      const successDiv = document.getElementById('successMessage');
+      
+      if (isError) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        successDiv.style.display = 'none';
+      } else {
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+      }
+      
+      // Hide messages after 5 seconds
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    // Form submission handler
+    document.getElementById('courseForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (isLoading) return;
+      
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Show loading state
+      isLoading = true;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+      
+      try {
+        // Collect form data with CORRECT field names
+        const requestData = {
+          cgpa: parseFloat(document.getElementById('cgpa').value),
+          programming: parseInt(document.getElementById('programming').value),
+          multimedia: parseInt(document.getElementById('multimedia').value),
+          machineLearning: parseInt(document.getElementById('machineLearning').value),
+          database: parseInt(document.getElementById('database').value),
+          softwareEngineering: parseInt(document.getElementById('softwareEngineering').value),
+          gameDevelopment: parseInt(document.getElementById('gameDevelopment').value),
+          webDevelopment: parseInt(document.getElementById('webDevelopment').value),
+          artificialIntelligence: parseInt(document.getElementById('artificialIntelligence').value),
+          databaseSystem: parseInt(document.getElementById('databaseSystem').value), // FIXED: was databaseDesign
+          softwareValidation: parseInt(document.getElementById('softwareValidation').value), // FIXED: was softwareValidationTesting
+          difficulty: parseInt(document.getElementById('difficulty').value),
+          learningStyle: parseInt(document.getElementById('learningStyle').value)
+        };
+        
+        console.log('Sending data:', requestData);
+
+        // Send to API
+        const response = await fetch(`${API_BASE_URL}/recommend`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+        console.log('API Response:', result);
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} ${response.statusText}. ${result.error || ''}`);
+        }
+
+        if (result.success && result.data) {
+          showMessage('Recommendation generated successfully! Redirecting...', false);
+          
+          // Create URL with results
+          const params = new URLSearchParams({
+            primary: result.data.firstRecommendedCourse,
+            primaryScore: result.data.firstConfidence.toFixed(3),
+            secondary: result.data.alternativeRecommendedCourse || 'N/A',
+            secondaryScore: (result.data.secondConfidence || 0).toFixed(3),
+            gaming: (result.data.probability_Gaming || 0).toFixed(3),
+            webdev: (result.data.probability_WebDevelopment || 0).toFixed(3),
+            fuzzy: (result.data.probability_FuzzyLogic || 0).toFixed(3),
+            database: (result.data.probability_DatabaseDesign || 0).toFixed(3),
+            software: (result.data.probability_SoftwareValidation_Verification || 0).toFixed(3)
+          });
+          
+          // Redirect to results page after short delay
+          setTimeout(() => {
+            window.location.href = `result.html?${params.toString()}`;
+          }, 1500);
+          
+        } else {
+          throw new Error(result.error || 'Unknown error occurred');
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        showMessage(`Error: ${error.message}. Please check if the API server is running on http://localhost:3000`, true);
+      } finally {
+        // Reset loading state
+        isLoading = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Get Recommendation';
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      checkApiStatus();
+      // Check API status every 30 seconds
+      setInterval(checkApiStatus, 30000);
+    });
+  </script>
+</body>
+</html>
