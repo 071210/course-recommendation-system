@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommended Courses</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+    header .logo {
+      font-weight: bold;
+      color: #643ecb;
+      font-size: 1.2rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #643ecb;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .result-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+    h2 {
+      color: #643ecb;
+      margin-bottom: 1rem;
+    }
+    .recommendation-card {
+      background: #f8f9fa;
+      border: 2px solid #643ecb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      text-align: left;
+    }
+    .primary-recommendation {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+    .secondary-recommendation {
+      border-color: #ffc107;
+      background: #fff3cd;
+    }
+    .confidence-score {
+      font-weight: bold;
+      color: #643ecb;
+      font-size: 1.1rem;
+    }
+    .course-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    .probability-section {
+      margin-top: 2rem;
+      text-align: left;
+    }
+    .probability-section h3 {
+      color: #643ecb;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .probability-bar {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+      padding: 1rem;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 1px solid #e9ecef;
+    }
+    .probability-label {
+      width: 250px;
+      font-weight: 500;
+      color: #333;
+    }
+    .probability-visual {
+      flex: 1;
+      height: 30px;
+      background: #e9ecef;
+      border-radius: 15px;
+      margin: 0 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    .probability-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #643ecb, #28a745);
+      border-radius: 15px;
+      transition: width 0.8s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .probability-value {
+      font-weight: bold;
+      min-width: 80px;
+      color: #643ecb;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      background: #643ecb;
+      color: white;
+      padding: 0.8rem 2rem;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 1rem 0.5rem;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background: #5434b0;
+    }
+    .button.secondary {
+      background: #6c757d;
+    }
+    .button.secondary:hover {
+      background: #545b62;
+    }
+    .no-data {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 2rem;
+    }
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .stat-card {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #dee2e6;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #643ecb;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Solitude</div>
+    <nav>
+      <a onclick="goToPage('index.html')">Home</a>
+      <a onclick="goToPage('input.html')">Recommendation</a>
+      <a onclick="goToPage('contact.html')">Contact</a>
+    </nav>
+  </header>
+
+  <div class="result-container">
+    <h2>🎯 Your Personalized Course Recommendations</h2>
+    <p>Based on your academic background, interests, and learning preferences, our AI-powered fuzzy logic system suggests:</p>
+    
+    <div id="recommendations">
+      <div class="no-data">
+        Loading recommendations...
+      </div>
+    </div>
+    
+    <div id="summaryStats" style="display: none;">
+      <div class="summary-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="topScore">--</div>
+          <div class="stat-label">Top Match Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalCourses">5</div>
+          <div class="stat-label">Courses Analyzed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="confidenceGap">--</div>
+          <div class="stat-label">Confidence Gap</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="probability-section" id="probabilitySection" style="display: none;">
+      <h3>📊 Detailed Course Compatibility Scores</h3>
+      <div id="probabilityBars"></div>
+    </div>
+    
+    <div style="margin-top: 2rem;">
+      <button class="button" onclick="goToPage('input.html')">🔄 Try Again</button>
+      <button class="button secondary" onclick="goToPage('index.html')">🏠 Back to Home</button>
+    </div>
+  </div>
+
+  <script>
+    function goToPage(page) {
+      window.location.href = page;
+    }
+
+    function animateProgressBar(element, targetWidth, delay = 0) {
+      setTimeout(() => {
+        element.style.width = targetWidth + '%';
+      }, delay);
+    }
+
+    function displayResults() {
+      const params = new URLSearchParams(window.location.search);
+      
+      // Check if we have the required parameters
+      const primary = params.get('primary');
+      const primaryScore = params.get('primaryScore');
+      const secondary = params.get('secondary');
+      const secondaryScore = params.get('secondaryScore');
+      
+      if (!primary || !primaryScore) {
+        document.getElementById('recommendations').innerHTML = `
+          <div class="no-data">
+            <h3>❌ No recommendation data found</h3>
+            <p>Please go back and fill out the recommendation form.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Create course descriptions for better understanding
+      const courseDescriptions = {
+        'Gaming': 'Perfect for creative minds who want to build interactive entertainment experiences using modern game engines and programming languages.',
+        'Web Development': 'Ideal for those interested in creating dynamic websites and web applications using frontend and backend technologies.',
+        'Fuzzy Logic': 'Excellent for analytical thinkers who want to explore advanced AI concepts and uncertain reasoning systems.',
+        'Database Design': 'Great for systematic thinkers who enjoy organizing and structuring data for efficient storage and retrieval.',
+        'Software Validation & Verification': 'Perfect for detail-oriented individuals who want to ensure software quality through testing and validation methodologies.'
+      };
+
+      // Function to get recommendation level based on confidence score (raw scores, not percentage)
+      function getRecommendationLevel(score) {
+        const numScore = parseFloat(score);
+        if (numScore >= 3.0) return { level: 'Excellent Match', color: '#28a745', icon: '🎯' };
+        if (numScore >= 2.5) return { level: 'Very Good Match', color: '#ffc107', icon: '⭐' };
+        if (numScore >= 2.0) return { level: 'Good Match', color: '#17a2b8', icon: '👍' };
+        if (numScore >= 1.5) return { level: 'Moderate Match', color: '#fd7e14', icon: '👌' };
+        return { level: 'Basic Match', color: '#6c757d', icon: '📋' };
+      }
+
+      const primaryLevel = getRecommendationLevel(primaryScore);
+      const secondaryLevel = secondary ? getRecommendationLevel(secondaryScore) : null;
+
+      // Display primary and secondary recommendations with enhanced details
+      document.getElementById('recommendations').innerHTML = `
+        <div class="recommendation-card primary-recommendation">
+          <h3>🥇 Primary Recommendation</h3>
+          <div class="course-title">${primary}</div>
+          <div class="confidence-score">
+            <span style="color: ${primaryLevel.color};">${primaryLevel.icon} ${primaryLevel.level}</span>
+            <br>
+            <span style="font-size: 1.3rem; color: #28a745;">Confidence Score: ${primaryScore}</span>
+            <span style="font-size: 0.9rem; color: #666;"> (Raw Score)</span>
+          </div>
+          <p style="margin-top: 1rem; color: #155724; line-height: 1.5;">
+            ${courseDescriptions[primary] || 'This course is highly recommended based on your profile.'}
+          </p>
+          <div style="margin-top: 1rem; padding: 0.8rem; background: rgba(40, 167, 69, 0.1); border-radius: 5px; border-left: 4px solid #28a745;">
+            <strong>Why this course?</strong> Our AI analysis found this course aligns exceptionally well with your academic background, interests, and learning preferences.
+          </div>
+        </div>
+        
+        ${secondary ? `
+        <div class="recommendation-card secondary-recommendation">
+          <h3>🥈 Alternative Recommendation</h3>
+          <div class="course-title">${secondary}</div>
+          <div class="confidence-score">
+            <span style="color: ${secondaryLevel.color};">${secondaryLevel.icon} ${secondaryLevel.level}</span>
+            <br>
+            <span style="font-size: 1.3rem; color: #ffc107;">Confidence Score: ${secondaryScore}</span>
+            <span style="font-size: 0.9rem; color: #666;"> (Raw Score)</span>
+          </div>
+          <p style="margin-top: 1rem; color: #856404; line-height: 1.5;">
+            ${courseDescriptions[secondary] || 'This is an excellent alternative course for you.'}
+          </p>
+          <div style="margin-top: 1rem; padding: 0.8rem; background: rgba(255, 193, 7, 0.1); border-radius: 5px; border-left: 4px solid #ffc107;">
+            <strong>Great alternative:</strong> This course also shows strong compatibility with your profile and could be an excellent choice.
+          </div>
+        </div>
+        ` : ''}
+        
+        <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+          <h4 style="color: #643ecb; margin-bottom: 1rem;">📊 How We Calculate Your Recommendations</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <div style="text-align: center;">
+              <div style="font-size: 1.5rem; color: #643ecb;">📚</div>
+              <div style="font-weight: bold;">Academic Performance</div>
+              <div style="font-size: 0.9rem; color: #666;">CGPA & Subject Grades</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.5rem; color: #643ecb;">❤️</div>
+              <div style="font-weight: bold;">Interest Levels</div>
+              <div style="font-size: 0.9rem; color: #666;">Your Preferences</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.5rem; color: #643ecb;">🎓</div>
+              <div style="font-weight: bold;">Learning Style</div>
+              <div style="font-size: 0.9rem; color: #666;">How You Learn Best</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 1.5rem; color: #643ecb;">⚡</div>
+              <div style="font-weight: bold;">Difficulty Level</div>
+              <div style="font-size: 0.9rem; color: #666;">Challenge Preference</div>
+            </div>
+          </div>
+          <div style="background: #e3f2fd; padding: 1rem; border-radius: 5px; border-left: 4px solid #2196f3;">
+            <strong>📈 Score Information:</strong> Our system uses consistent 1-5 scales for both CGPA and subject grades, plus 1-5 interest levels to generate raw compatibility scores typically between 0.1 - 5.0, where higher scores indicate better matches.
+            <br><br>
+            <strong>Grade Scale Reference (CGPA & Subjects):</strong>
+            <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
+              <li>5 = Excellent (3.5-4.0 GPA equivalent)</li>
+              <li>4 = Good (3.0-3.4 GPA equivalent)</li>
+              <li>3 = Average (2.5-2.9 GPA equivalent)</li>
+              <li>2 = Below Average (2.0-2.4 GPA equivalent)</li>
+              <li>1 = Poor (1.0-1.9 GPA equivalent)</li>
+              <li>0 = Not taken (for subjects only)</li>
+            </ul>
+          </div>
+        </div>
+      `;
+
+      // Display summary statistics
+      const topScore = parseFloat(primaryScore);
+      const altScore = parseFloat(secondaryScore) || 0;
+      const confidenceGap = (topScore - altScore).toFixed(1);
+      
+      document.getElementById('topScore').textContent = `${topScore}%`;
+      document.getElementById('confidenceGap').textContent = `${confidenceGap}%`;
+      document.getElementById('summaryStats').style.display = 'block';
+
+      // Display probability bars if we have the data
+      const probabilities = {
+        'Gaming': parseFloat(params.get('gaming')) || 0,
+        'Web Development': parseFloat(params.get('webdev')) || 0,
+        'Fuzzy Logic': parseFloat(params.get('fuzzy')) || 0,
+        'Database Design': parseFloat(params.get('database')) || 0,
+        'Software Validation & Verification': parseFloat(params.get('software')) || 0
+      };
+
+      // Check if we have probability data
+      const hasProbs = Object.values(probabilities).some(val => val > 0);
+      
+      if (hasProbs) {
+        document.getElementById('probabilitySection').style.display = 'block';
+        
+        // Convert probabilities to confidence scores (0-100 scale)
+        const maxProb = Math.max(...Object.values(probabilities));
+        
+        let probabilityHTML = '';
+        let delay = 0;
+        
+        // Sort courses by probability for better visualization
+        const sortedCourses = Object.entries(probabilities)
+          .sort(([,a], [,b]) => b - a)
+          .map(([course, prob]) => {
+            // For raw scores (0.1 - 5.0 range), convert to percentage for display
+            const maxPossibleScore = 5.0; // Assuming max score is around 5.0
+            const normalizedScore = Math.min((prob / maxPossibleScore) * 100, 100);
+            const percentage = maxProb > 0 ? (prob / maxProb) * 100 : 0; // For bar width
+            
+            // Determine confidence level and color based on raw score
+            let confidenceLevel = '';
+            let barColor = '';
+            let textColor = '';
+            
+            if (prob >= 3.0) {
+              confidenceLevel = 'Excellent';
+              barColor = 'linear-gradient(90deg, #28a745, #20c997)';
+              textColor = '#28a745';
+            } else if (prob >= 2.5) {
+              confidenceLevel = 'Very Good';
+              barColor = 'linear-gradient(90deg, #28a745, #ffc107)';
+              textColor = '#ffc107';
+            } else if (prob >= 2.0) {
+              confidenceLevel = 'Good';
+              barColor = 'linear-gradient(90deg, #17a2b8, #20c997)';
+              textColor = '#17a2b8';
+            } else if (prob >= 1.5) {
+              confidenceLevel = 'Moderate';
+              barColor = 'linear-gradient(90deg, #fd7e14, #ffc107)';
+              textColor = '#fd7e14';
+            } else {
+              confidenceLevel = 'Basic';
+              barColor = 'linear-gradient(90deg, #6c757d, #adb5bd)';
+              textColor = '#6c757d';
+            }
+
+            return `
+              <div class="probability-bar" style="border-left: 4px solid ${textColor};">
+                <div class="probability-label">
+                  <div style="font-weight: bold;">${course}</div>
+                  <div style="font-size: 0.8rem; color: ${textColor};">${confidenceLevel} Match</div>
+                </div>
+                <div class="probability-visual">
+                  <div class="probability-fill" 
+                       id="fill-${course.replace(/[^a-zA-Z0-9]/g, '')}" 
+                       style="width: 0%; background: ${barColor};">
+                    ${percentage > 25 ? prob.toFixed(3) : ''}
+                  </div>
+                </div>
+                <div class="probability-value" style="color: ${textColor}; font-weight: bold;">
+                  <div>${prob.toFixed(3)}</div>
+                  <div style="font-size: 0.8rem;">Raw Score</div>
+                </div>
+              </div>
+            `;
+          });
+        
+        document.getElementById('probabilityBars').innerHTML = sortedCourses.join('');
+        
+        // Animate progress bars
+        delay = 500; // Initial delay
+        Object.entries(probabilities).forEach(([course, prob]) => {
+          const percentage = maxProb > 0 ? (prob / maxProb) * 100 : 0;
+          const elementId = `fill-${course.replace(/[^a-zA-Z0-9]/g, '')}`;
+          const element = document.getElementById(elementId);
+          if (element) {
+            animateProgressBar(element, percentage, delay);
+            delay += 200;
+          }
+        });
+        
+        // Add explanation section
+        document.getElementById('probabilityBars').innerHTML += `
+          <div style="margin-top: 2rem; padding: 1rem; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <h4 style="color: #1976d2; margin-bottom: 0.5rem;">💡 Understanding Your Raw Scores</h4>
+            <ul style="margin: 0; padding-left: 1.5rem; color: #1565c0;">
+              <li><strong>3.0+:</strong> Excellent match - Highly recommended for your profile</li>
+              <li><strong>2.5-2.9:</strong> Very good match - Strong alignment with your interests</li>
+              <li><strong>2.0-2.4:</strong> Good match - Suitable based on your background</li>
+              <li><strong>1.5-1.9:</strong> Moderate match - Could work with additional consideration</li>
+              <li><strong>Below 1.5:</strong> Basic match - May require more research</li>
+            </ul>
+            <div style="margin-top: 0.5rem; font-size: 0.9rem; font-style: italic;">
+              <strong>Note:</strong> Raw scores reflect the weighted combination of your academic performance, interests, learning style, and fuzzy logic analysis.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      displayResults();
+    });
+  </script>
+</body>
+</html>
