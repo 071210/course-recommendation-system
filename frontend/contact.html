@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+    header .logo {
+      font-weight: bold;
+      color: #643ecb;
+      font-size: 1.2rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #643ecb;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    nav a:hover {
+      color: #5434b0;
+    }
+    .contact-container {
+      max-width: 700px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #643ecb;
+      margin-bottom: 1.5rem;
+    }
+    p {
+      text-align: center;
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      padding: 0.8rem 0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+    }
+    li:last-child {
+      border-bottom: none;
+    }
+    .contact-icon {
+      margin-right: 0.8rem;
+      font-size: 1.2rem;
+      color: #643ecb;
+      width: 20px;
+    }
+    .contact-content {
+      flex: 1;
+    }
+    strong {
+      color: #333;
+    }
+    .team-members {
+      margin-top: 0.5rem;
+      line-height: 1.4;
+    }
+    @media (max-width: 768px) {
+      .contact-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+      li {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .contact-icon {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Solitude</div>
+    <nav>
+      <a onclick="goToPage('index.html')">Home</a>
+      <a onclick="goToPage('input.html')">Recommendation</a>
+      <a onclick="goToPage('contact.html')">Contact</a>
+    </nav>
+  </header>
+
+  <div class="contact-container">
+    <h2>Contact Us</h2>
+    <p>If you have any questions or feedback, feel free to reach out:</p>
+    
+    <ul>
+      <li>
+        <span class="contact-icon">📧</span>
+        <div class="contact-content">
+          <strong>Email:</strong> b032310473@student.utem.edu.my
+        </div>
+      </li>
+      
+      <li>
+        <span class="contact-icon">📱</span>
+        <div class="contact-content">
+          <strong>Phone:</strong> +60 19-955 1472
+        </div>
+      </li>
+      
+      <li>
+        <span class="contact-icon">👥</span>
+        <div class="contact-content">
+          <strong>Team Members:</strong>
+          <div class="team-members">
+            Loh Yuan Li, Goh Jia Yee, Wong Jing Wen, Yew Zhi Yu, Soon Ching Mei, Aevan Cheong Wei Ren
+          </div>
+        </div>
+      </li>
+      
+      <li>
+        <span class="contact-icon">🏫</span>
+        <div class="contact-content">
+          <strong>Institution:</strong> Fakulti Teknologi Maklumat dan Komunikasi, UTeM
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <script>
+    function goToPage(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>
